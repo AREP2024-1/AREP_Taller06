@@ -1,29 +1,18 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Form Example</title>
+        <title>Taller-06</title>
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <script src="./index.js"></script>
     </head>
     <body>
-        <h1>Form with GET</h1>
-        <form action="/logservicefacade">
-            <label for="msg">Mensaje:</label><br>
-            <input id="msg" name="msg" type="text" value="John"><br><br>
-            <input onclick="loadGetMsg()" type="button" value="Submit">
+        <h1>Servicio Logs</h1>
+        <form>
+            <label for="cadena">Cadena:</label><br>
+            <input id="cadena" name="cadena" type="text" value=""><br><br>
+            <input onclick="cadenaLog()" type="button" value="Submit">
         </form>
-        <div id="getrespmsg"></div>
-        <script>
-            function loadGetMsg() {
-                let msgVar = document.getElementById("msg").value;
-                const xhttp = new XMLHttpRequest();
-                xhttp.onload = function() {
-                    document.getElementById("getrespmsg").innerHTML =
-                    this.responseText;
-                }
-                xhttp.open("GET", "/logservicefacade?name="+msgVar);
-                xhttp.send();
-            }
-        </script>
+        <div id="resLog"></div>
     </body>
 </html>
