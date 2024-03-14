@@ -13,7 +13,7 @@ public class AppRoundRobin {
         index = 0;
         logsServices = new ArrayList<>();
         for (int i = 0; i < cantLogsServices; i++) {
-            String url = "http://localhost:" + (port + i) + "/logService";
+            String url = "http://logservice-"+ i + ":" + (port) + "/logService";
             
             logsServices.add(new LogsService(url, port + i));
         }
@@ -21,7 +21,7 @@ public class AppRoundRobin {
     }
 
     public AppRoundRobin(){
-        this(3, 10000);
+        this(3, 5000);
     }
 
     public Collection<String> invokerLogs(String cadena){
