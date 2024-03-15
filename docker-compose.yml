@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    networks:
+      - red-taller06
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+      - mongodb_config:/data/configdb
+    environment:
+      MONGO_INITDB_DATABASE: logs 
+      MONGO_INITDB_ROOT_USERNAME: daniela 
+      MONGO_INITDB_ROOT_PASSWORD: daniela2004 
+
+  logservice-0:
+    image: danielaladino/docker-taller-06
+    build:
+      context: ./logService
+      dockerfile: Dockerfile
+    container_name: logservice-0
+    networks:
+      - red-taller06
+    depends_on:
+      - mongodb
+
+  logservice-1:
+    image: danielaladino/docker-taller-06
+    build:
+      context: ./logService
+      dockerfile: Dockerfile
+    container_name: logservice-1
+    networks:
+      - red-taller06
+    depends_on:
+      - mongodb
+  
+  logservice-2:
+    image: danielaladino/docker-taller-06
+    build:
+      context: ./logService
+      dockerfile: Dockerfile
+    container_name: logservice-2
+    networks:
+      - red-taller06
+    depends_on:
+      - mongodb
+  
+  roundrobin:
+    image: danielaladino/round-robin
+    build:
+      context: ./appRoundRobin
+      dockerfile: Dockerfile
+    container_name: container-round
+    networks:
+      - red-taller06
+    ports:
+      - 8080:80
+    depends_on:
+      - mongodb
+      - logservice-0
+      - logservice-1
+      - logservice-2
+
+networks:
+  red-taller06:
+    driver: bridge
+
+volumes:
+  mongodb:
+  mongodb_config:
