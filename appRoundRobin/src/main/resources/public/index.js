@@ -9,7 +9,7 @@ function cadenaLog(){
 }
 
 async function solicitarEndPoint(endPoint){
-    return await fetch("http://localhost:"+ window.location.port + endPoint)
+    return await fetch(window.location.origin + ":" + window.location.port + endPoint)
     .then(respuesta => {
         if(!respuesta.ok){
             throw new Error();
