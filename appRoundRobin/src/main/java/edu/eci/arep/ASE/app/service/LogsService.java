@@ -11,7 +11,13 @@ public class LogsService {
     private int port;
     private HttpClient httpClient;
 
-    public LogsService(String url, int port){
+    public LogsService(String url, int port, HttpClient httpClient) {
+        this.url = url;
+        this.port = port;
+        this.httpClient = httpClient;
+    }
+
+    public LogsService(String url, int port) {
         this.url = url;
         this.port = port;
         this.httpClient = new HttpClient();

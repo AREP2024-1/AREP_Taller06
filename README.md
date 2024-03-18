@@ -9,24 +9,26 @@ Esta aplicación incluye un balanceador de carga Round Robin que distribuye equi
 ---
 ### Prerrequisitos
 
-* [Maven](https://maven.apache.org/): Es una herramienta de comprensión y gestión de proyectos de software. Basado en el concepto de modelo de objetos de proyecto (POM), Maven puede gestionar la construcción, los informes y la documentación de un proyecto desde una pieza de información central.
+* [Maven](https://maven.apache.org/)
 
-* [Git](https://learn.microsoft.com/es-es/devops/develop/git/what-is-git): Es un sistema de control de versiones distribuido, lo que significa que un clon local del proyecto es un repositorio de control de versiones completo. Estos repositorios locales plenamente funcionales permiten trabajar sin conexión o de forma remota con facilidad.
+* [Git](https://learn.microsoft.com/es-es/devops/develop/git/what-is-git)
 
-* [Docker](https://aws.amazon.com/es/docker/): Es una plataforma de software que le permite crear, probar e implementar aplicaciones rápidamente. Docker empaqueta software en unidades estandarizadas llamadas contenedores que incluyen todo lo necesario para que el software se ejecute, incluidas bibliotecas, herramientas de sistema, código y tiempo de ejecución.
+* [Docker](https://aws.amazon.com/es/docker/)
 
-* [DockerHub](https://flexa.cloud/es/%C2%BFQu%C3%A9-es-el-centro-de-la-ventana-acoplable%3F/): Es un repositorio público de imágenes de contenedores, donde muchas empresas e individuos pueden publicar imágenes de soluciones prediseñadas.
+* [DockerHub](https://flexa.cloud/es/%C2%BFQu%C3%A9-es-el-centro-de-la-ventana-acoplable%3F/)
 
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/): Es una aplicación de escritorio que proporciona una experiencia unificada para desarrollar, implementar y administrar aplicaciones en contenedores Docker en sistemas operativos Windows y macOS.
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ---
 
-### Instalación
+### Instalación y Ejecución
+
+***A. Trayendo las imagenes de DockerHub***
 
 1.Clonamos el repositorio
 
 ```
-https://github.com/AREP2024-1/AREP_Taller05.git
+https://github.com/AREP2024-1/AREP_Taller06.git
 ```
 
 2.Ingresamos a la carpeta del repositorio que clonamos anteriormente
@@ -35,27 +37,205 @@ https://github.com/AREP2024-1/AREP_Taller05.git
 cd AREP_Taller06
 ```
 
-3.Contruimos el proyecto
+3.Ejecutamos el docker-compose
+
+```
+docker-compose up -d
+```
+
+4.Verificamos que los contenedores se esten ejecutando
+
+```
+docker ps
+```
+![](images/Contenedores.JPG)
+
+5.Probamos nuestra aplicación accediendo a la siguiente URL en el navegador
+
+```
+ http://localhost:8080/index.html
+```
+![](images/index.JPG)
+
+***B. Construyendo las imagenes (docker-compose.build)***
+
+**Nota :** Otra alternativa para la instalción y ejecución es construir las imagenes de docker, para esto vamos a usar **docker-compose.build**
+
+1.Clonamos el repositorio
+
+```
+https://github.com/AREP2024-1/AREP_Taller06.git
+```
+
+2.Ingresamos a la carpeta del repositorio que clonamos anteriormente
+
+```
+cd AREP_Taller06
+```
+
+3.Nos movemos a la carpeta appRoundRobin
+
+```
+cd appRoundRobin
+```
+
+4.Construimos el proyecto
 
 ```
 mvn package
 ```
 
+5.Nos movemos nuevamente a la carpeta raiz
+
+```
+cd ..
+```
+
+6.Nos movemos a la carpeta logService
+
+```
+cd logService
+```
+
+7.Construimos el proyecto
+
+```
+mvn package
+```
+
+8.Nos movemos nuevamente a la carpeta raiz
+
+```
+cd ..
+```
+
+9.Ejecutamos el docker-compose.build
+
+```
+docker-compose -f docker-compose.build.yml up -d
+```
+
+10.Verificamos que los contenedores se esten ejecutando
+
+```
+docker ps
+```
+
+11.Probamos nuestra aplicación accediendo a la siguiente URL en el navegador
+
+```
+ http://localhost:8080/index.html
+```
+![](images/index.JPG)
+
 ---
 
-### Ejecución
+### Casos de prueba
+
+Para probar la aplicación debemos ingresar una cadena en el campo de texto y luego damos click en el boton submit.
+
+Como podemos observar en la siguiente imagen luego de dar click en submit con la cadena “prueba-10”, esta se agrega al final de la lista de logs.
+
+Al enviar la cadena esta se almacena en la base de datos con la fecha y hora exacta y en pantalla vamos a ver el id y la información del log como la fecha y hora, el puerto y el mensaje de este
+
+![](images/log.JPG)
+
+Adicional a esto también podemos observar como el balanceador de carga Round Robin distribuye la carga de trabajo entre las instancias de servicio de logs, como se puede visualizar en la siguiente imagen
+
+![](images/ejecucionPuertos.JPG)
+
+La aplicación está construida para que nos muestre en pantalla los últimos 10 logs, por lo tanto, al ingresar la cadena “prueba-11”, el log de la cadena “prueba-1” se dejara de ver en la lista de logs que aparece en pantalla.
+
+![](images/log11.JPG)
 
 ---
 ### Ejecución de Test
 
-Ejecutamos el siguiente comando
+1.Desde la raiz nos movemos a la carpeta appRoundRobin
 
 ```
-mvn test 
+cd appRoundRobin
+```
+
+2.Ejecutamos las pruebas con el siguiente comando
+
+```
+mvn test
+```
+
+3.Nos devolvemos nuevamente a la carpeta raiz
+
+```
+cd ..
+```
+
+4.Ahora nos movemos a la carpeta logService
+
+```
+cd logService
+```
+
+5.Ejecutamos las pruebas con el siguiente comando
+
+```
+mvn test
 ```
 
 ---
 ### Arquitectura
+
+Esta arquitectura incluye un algoritmo de balanceo de carga Round Robin junto con un servicio LogService que almacena cadenas en una base de datos MongoDB. Para esto se crearon dos proyectos uno para el round robin y otro para el log services, los cuales se describirán de una manera más detallada más adelante.
+
+**Componentes**
+* **Round Robin:** Balanceador de carga Round Robin que distribuye las solicitudes entre múltiples instancias de LogService.
+En este caso utilizamos 3 instancias del servicio LogService. La distribución de las solicitudes se realiza de manera secuencial, comenzando desde la primera instancia, pasando por la segunda y llegando a la tercera, para luego volver nuevamente a la primera. Este enfoque asegura una distribución equitativa de la carga entre todas las instancias disponibles, optimizando así el rendimiento y la disponibilidad del sistema. Así mismo cada una de las cadenas serán enviadas a través de un formulario que se implementó para la aplicación.
+
+* **LogService:** Servicio REST que recibe cadenas, las almacena en una base de datos MongoDB y devuelve las últimas 10 cadenas almacenadas junto con sus fechas.
+
+* **MongoDB:** Base de datos NoSQL utilizada para almacenar las cadenas procesadas por el servicio LogService.
+
+![](images/arquitectura.jpg)
+
+**Estructura Proyecto Round Robin :**
+
+El proyecto está estructurado en diferentes paquetes y clases:
+
+***Main:*** Clase principal que inicia la aplicación y configura el controlador Spark.
+
+**1. apiExtenal**
+* **HttpClient:** Clase para realizar llamadas HTTP utilizando OkHttp.
+
+**2. controller**
+* **MyController:** Interfaz que define los métodos para los controladores.
+
+* **MySparkController:** Implementación de un controlador Spark para manejar las solicitudes y utilizar el algoritmo de Round Robin.
+
+**3. service**
+* **AppRoundRobin:** Clase que implementa el algoritmo de Round Robin para distribuir las solicitudes entre las instancias de LogService.
+
+* **LogsService:** Clase que representa un servicio LogService y realiza llamadas a otras instancias utilizando el HttpClient.
+
+
+**Estructura Proyecto Log Service :**
+
+El proyecto está estructurado en diferentes paquetes y clases:
+
+**Main:** Clase principal que inicia la aplicación LogService.
+
+**1. controller**
+* **MyController:** Interfaz que define los métodos para los controladores.
+
+* **MySparkController:** Implementación de un controlador Spark para manejar las solicitudes al servicio LogService.
+
+**2. persistence**
+* **CRUDOperations:** Interfaz para operaciones CRUD (Crear, Leer, Actualizar, Eliminar) en la base de datos MongoDB.
+
+* **GestionLogs:** Implementación de operaciones CRUD utilizando MongoDB para gestionar los registros de logs.
+
+* **MongoUtil:** Clase para realizar la conexión a la base de datos MongoDB.
+
+**3. service**
+* **LogsService:** Clase que representa el servicio LogService y realiza operaciones de guardar y obtener los ultimos 10 logs.
 
 ---
 
@@ -76,6 +256,13 @@ mvn test
 * [Visual Studio Code](https://openwebinars.net/blog/que-es-visual-studio-code-y-que-ventajas-ofrece/): Es un editor de código fuente desarrollado por Microsoft. Es software libre y multiplataforma, está disponible para Windows, GNU/Linux y macOS.
 
 * [Docker](https://aws.amazon.com/es/docker/): Es una plataforma de software que le permite crear, probar e implementar aplicaciones rápidamente. Docker empaqueta software en unidades estandarizadas llamadas contenedores que incluyen todo lo necesario para que el software se ejecute, incluidas bibliotecas, herramientas de sistema, código y tiempo de ejecución.
+
+* [DockerHub](https://flexa.cloud/es/%C2%BFQu%C3%A9-es-el-centro-de-la-ventana-acoplable%3F/): Es un repositorio público de imágenes de contenedores, donde muchas empresas e individuos pueden publicar imágenes de soluciones prediseñadas.
+
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/): Es una aplicación de escritorio que proporciona una experiencia unificada para desarrollar, implementar y administrar aplicaciones en contenedores Docker en sistemas operativos Windows y macOS.
+
+* [AWS](https://aws.amazon.com/es/training/awsacademy/): Ofrece cursos y recursos de aprendizaje que permiten a los estudiantes desarrollar diferentes habilidades relacionadas con la nube de AWS.
+
 
 ## Autor
 
