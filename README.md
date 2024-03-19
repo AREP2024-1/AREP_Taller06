@@ -13,17 +13,19 @@ Esta aplicación incluye un balanceador de carga Round Robin que distribuye equi
 
 * [Git](https://learn.microsoft.com/es-es/devops/develop/git/what-is-git)
 
+* [Java -17](https://www.cursosaula21.com/que-es-java/)
+
 * [Docker](https://aws.amazon.com/es/docker/)
 
 * [DockerHub](https://flexa.cloud/es/%C2%BFQu%C3%A9-es-el-centro-de-la-ventana-acoplable%3F/)
 
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+* [Docker Compose](https://imaginaformacion.com/tutoriales/que-es-docker-compose)
+
+* [AWS](https://aws.amazon.com/es/training/awsacademy/)
 
 ---
 
 ### Instalación y Ejecución
-
-***A. Trayendo las imagenes de DockerHub***
 
 1.Clonamos el repositorio
 
@@ -37,20 +39,25 @@ https://github.com/AREP2024-1/AREP_Taller06.git
 cd AREP_Taller06
 ```
 
-3.Ejecutamos el docker-compose
+**Nota :** Este proyecto nos ofrece dos alternativas para la instalción y ejecución  de este, las cuales son:
+
+
+***A. Trayendo las imagenes de DockerHub***
+
+1.Ejecutamos el docker-compose
 
 ```
 docker-compose up -d
 ```
 
-4.Verificamos que los contenedores se esten ejecutando
+2.Verificamos que los contenedores se esten ejecutando
 
 ```
 docker ps
 ```
 ![](images/Contenedores.JPG)
 
-5.Probamos nuestra aplicación accediendo a la siguiente URL en el navegador
+3.Probamos nuestra aplicación accediendo a la siguiente URL en el navegador
 
 ```
  http://localhost:8080/index.html
@@ -59,69 +66,59 @@ docker ps
 
 ***B. Construyendo las imagenes (docker-compose.build)***
 
-**Nota :** Otra alternativa para la instalción y ejecución es construir las imagenes de docker, para esto vamos a usar **docker-compose.build**
+Para construir las imagenes de docker usando el archivo **docker-compose.build**, debemos realizar los siguientes pasos:
 
-1.Clonamos el repositorio
-
-```
-https://github.com/AREP2024-1/AREP_Taller06.git
-```
-
-2.Ingresamos a la carpeta del repositorio que clonamos anteriormente
-
-```
-cd AREP_Taller06
-```
-
-3.Nos movemos a la carpeta appRoundRobin
+1.Nos movemos a la carpeta appRoundRobin
 
 ```
 cd appRoundRobin
 ```
 
-4.Construimos el proyecto
+2.Construimos el proyecto
 
 ```
 mvn package
 ```
 
-5.Nos movemos nuevamente a la carpeta raiz
+3.Luego no movemos nuevamente a la carpeta raiz
 
 ```
 cd ..
 ```
 
-6.Nos movemos a la carpeta logService
+4.Ahora nos movemos a la carpeta logService
 
 ```
 cd logService
 ```
 
-7.Construimos el proyecto
+5.Construimos el proyecto
 
 ```
 mvn package
 ```
 
-8.Nos movemos nuevamente a la carpeta raiz
+6.Nos movemos nuevamente a la carpeta raiz
 
 ```
 cd ..
 ```
 
-9.Ejecutamos el docker-compose.build
+7.Ejecutamos el docker-compose.build
 
 ```
 docker-compose -f docker-compose.build.yml up -d
 ```
 
-10.Verificamos que los contenedores se esten ejecutando
+8.Verificamos que los contenedores se esten ejecutando
 
 ```
 docker ps
 ```
 
-11.Probamos nuestra aplicación accediendo a la siguiente URL en el navegador
+![](images/Contenedores.JPG)
+
+9.Probamos nuestra aplicación accediendo a la siguiente URL en el navegador
 
 ```
  http://localhost:8080/index.html
@@ -130,13 +127,13 @@ docker ps
 
 ---
 
-### Casos de prueba
+### Usabilidad
 
 Para probar la aplicación debemos ingresar una cadena en el campo de texto y luego damos click en el boton submit.
 
-Como podemos observar en la siguiente imagen luego de dar click en submit con la cadena “prueba-10”, esta se agrega al final de la lista de logs.
+Como podemos observar en la siguiente imagen luego de dar click en submit con la cadena “prueba-10”, esta se agrega al final de la lista de logs. Así mismo al enviar la cadena esta se almacena en la base de datos con la fecha y hora exacta.
 
-Al enviar la cadena esta se almacena en la base de datos con la fecha y hora exacta y en pantalla vamos a ver el id y la información del log como la fecha y hora, el puerto y el mensaje de este
+En pantalla vamos a ver el id y la información del log como la fecha y hora, el puerto y el mensaje de este.
 
 ![](images/log.JPG)
 
@@ -180,15 +177,25 @@ cd logService
 ```
 mvn test
 ```
+---
+### Despliegue en AWS
+
+En el siguiente link encontrara el video donde se evidencia el despliegue en AWS:
+
+```
+https://youtu.be/cW1mk80LFdU
+```
 
 ---
 ### Arquitectura
 
 Esta arquitectura incluye un algoritmo de balanceo de carga Round Robin junto con un servicio LogService que almacena cadenas en una base de datos MongoDB. Para esto se crearon dos proyectos uno para el round robin y otro para el log services, los cuales se describirán de una manera más detallada más adelante.
 
+Es importante tener en cuenta que se crean dos proyectos debido a que se está trabajando con microservicios.  Esto nos permite conectar varias instancias de una manera más sencilla y eficiente.
+
 **Componentes**
 * **Round Robin:** Balanceador de carga Round Robin que distribuye las solicitudes entre múltiples instancias de LogService.
-En este caso utilizamos 3 instancias del servicio LogService. La distribución de las solicitudes se realiza de manera secuencial, comenzando desde la primera instancia, pasando por la segunda y llegando a la tercera, para luego volver nuevamente a la primera. Este enfoque asegura una distribución equitativa de la carga entre todas las instancias disponibles, optimizando así el rendimiento y la disponibilidad del sistema. Así mismo cada una de las cadenas serán enviadas a través de un formulario que se implementó para la aplicación.
+En este caso utilizamos 3 instancias estáticas del servicio LogService. La distribución de las solicitudes se realiza de manera secuencial, comenzando desde la primera instancia, pasando por la segunda y llegando a la tercera, para luego volver nuevamente a la primera. Este enfoque asegura una distribución equitativa de la carga entre todas las instancias disponibles, optimizando así el rendimiento y la disponibilidad del sistema. Así mismo cada una de las cadenas serán enviadas a través de un formulario que se implementó para la aplicación.
 
 * **LogService:** Servicio REST que recibe cadenas, las almacena en una base de datos MongoDB y devuelve las últimas 10 cadenas almacenadas junto con sus fechas.
 
